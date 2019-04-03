@@ -4214,7 +4214,7 @@ static void netflow_switch_version(const int ver)
 	free_templates();
 	pdu_flow_records = pdu_data_records = pdu_tpl_records = 0;
 	pdu_flowset = NULL;
-	printk(KERN_INFO "ipt_NETFLOW protocol version %d (%s) enabled.\n",
+	printk(KERN_INFO "ipt_NETFLOW protocol version hogehige %d (%s) enabled.\n",
 	    protocol, protocol == 10? "IPFIX" : "NetFlow");
 }
 
