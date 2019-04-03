@@ -156,7 +156,7 @@ MODULE_PARM_DESC(promisc, "enable promisc hack (0=default, 1)");
 static DEFINE_MUTEX(promisc_lock);
 #endif
 
-static int debug = 0;
+static int debug = 2;
 module_param(debug, int, 0644);
 MODULE_PARM_DESC(debug, "debug verbosity level");
 
