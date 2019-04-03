@@ -5274,7 +5274,7 @@ do_protocols:
 			nf->flow_label = (iph->ip6.flow_lbl[0] << 16) |
 			       	(iph->ip6.flow_lbl[1] << 8) | (iph->ip6.flow_lbl[2]);
 		}
-#if 0
+#if 1
 		if (unlikely(debug > 2))
 			printk(KERN_INFO "ipt_NETFLOW: new (%u) %hd:%hd SRC=%u.%u.%u.%u:%u DST=%u.%u.%u.%u:%u\n",
 			       atomic_read(&ipt_netflow_count),
