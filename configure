@@ -298,6 +298,7 @@ show_help() {
   echo "  --enable-natevents     enables natevents support"
   echo "  --enable-snmp-rules    enables SNMP-index conversion rules"
   echo "  --enable-macaddress    enables MAC address for v9/IPFIX"
+  echo "  --enable-srv6          enables SRv6 for IPFIX(under development)"
   echo "  --enable-vlan          enables VLAN Ids for v9/IPFIX"
   echo "  --enable-direction     enables flowDirection(61) Element"
   echo "  --enable-sampler       enables Flow Sampling"
@@ -332,6 +333,7 @@ do
     --kdir=*)      KDIR="$ac_optarg" ;;
     --enable-nat*)   KOPTS="$KOPTS -DENABLE_NAT" ;;
     --enable-mac*)   KOPTS="$KOPTS -DENABLE_MAC" ;;
+    --enable-srv6*)   KOPTS="$KOPTS -DENABLE_SRv6" ;;
     --enable-vlan*)  KOPTS="$KOPTS -DENABLE_VLAN" ;;
     --enable-direc*) KOPTS="$KOPTS -DENABLE_DIRECTION" ;;
     --enable-sampl*hash) KOPTS="$KOPTS -DENABLE_SAMPLER -DSAMPLING_HASH" ;;
