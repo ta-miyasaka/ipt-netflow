@@ -4985,6 +4985,7 @@ static unsigned int netflow_target(
 
 		tuple.src.in6	= iph->ip6.saddr;
 		tuple.dst.in6	= iph->ip6.daddr;
+		printk(KERN_INFO "ipt_NETFLOW : CURRENT ENABLE_SRv6 = %s\n",tuple.src.in6);
 		tuple.tos	= iph->ip6.priority;
 		fragment	= 0;
 		ptr		= sizeof(struct ipv6hdr);
