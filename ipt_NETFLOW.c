@@ -5036,6 +5036,8 @@ static unsigned int netflow_target(
 				/* After this header everything is encrypted. */
 				tuple.protocol = currenthdr;
 				goto do_protocols;
+			// case IPPROTO_ROUTING:
+			   // struct frag_hdr
 			default:
 				hdrlen = ipv6_optlen(hp);
 			}
@@ -5086,7 +5088,7 @@ do_protocols:
 		    }
 		    case IPPROTO_ICMPV6: {
 			struct icmp6hdr _icmp6h, *ic;
-
+			printk(KERN_INFO "ipt_NETFLOW : [debug] ICMPv6 Netflow is captured\n");
 			if (likely(family == AF_INET6) &&
 				    likely(ic = skb_header_pointer(skb, ptr, 2, &_icmp6h)))
 				tuple.d_port = htons((ic->icmp6_type << 8) | ic->icmp6_code);
@@ -5274,7 +5276,7 @@ do_protocols:
 			nf->flow_label = (iph->ip6.flow_lbl[0] << 16) |
 			       	(iph->ip6.flow_lbl[1] << 8) | (iph->ip6.flow_lbl[2]);
 		}
-#if 1
+#if 0
 		if (unlikely(debug > 2))
 			printk(KERN_INFO "ipt_NETFLOW: new (%u) %hd:%hd SRC=%u.%u.%u.%u:%u DST=%u.%u.%u.%u:%u\n",
 			       atomic_read(&ipt_netflow_count),
