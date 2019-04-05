@@ -282,6 +282,15 @@ struct ipt_netflow_tuple {
 	__u8		h_dst[ETH_ALEN];
 	__u8		h_src[ETH_ALEN];
 #endif
+#ifdef ENABLE_SRv6
+    __u8        seg_left;
+    __u8        last_entry;
+    __u8        seg6_flag;
+    __u16       seg6_tag;
+    struct in6_addr seg6_sid[3];
+    union nf_inet_addr inner_src;
+    union nf_inet_addr inner_dst;
+#endif
 } __attribute__ ((packed));
 
 /* hlist[2] + tuple[]: 8+8 + 41 = 57 (less than usual cache line, 64) */
