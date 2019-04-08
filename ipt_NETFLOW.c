@@ -5047,6 +5047,11 @@ static unsigned int netflow_target(
                     const struct ipv6_sr_hdr *srhp;
                     srhp = skb_header_pointer(skb, ptr, sizeof(_srh), &_srh);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] Routing Type : %d \n",srhp->type);
+			        printk(KERN_INFO "ipt_NETFLOW : [debug] Next Hdr : %d \n",srhp->nexthdr);
+			        printk(KERN_INFO "ipt_NETFLOW : [debug] Segment Left : %d \n",srhp->segments_left);
+			        printk(KERN_INFO "ipt_NETFLOW : [debug] First Segment : %d \n",srhp->first_segment);
+			        printk(KERN_INFO "ipt_NETFLOW : [debug] Flags : %d \n",srhp->flags);
+			        printk(KERN_INFO "ipt_NETFLOW : [debug] Tag : %d \n",srhp->tag);
 			        tuple.seg_left = srhp->segments_left;
 			        tuple.last_entry = srhp->first_segment;
 			        tuple.seg6_flag = srhp->flags;
