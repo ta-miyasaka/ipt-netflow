@@ -2832,6 +2832,7 @@ struct base_template {
 #define BTPL_SAMPLERID	0x00400000	/* samplerId (v9) */
 #define BTPL_SELECTORID	0x00800000	/* selectorId (IPFIX) */
 #define BTPL_MPLS	0x01000000	/* MPLS stack */
+#define BTPL_SRV6   0x02000000  /* SRv6 */
 #define BTPL_OPTION	0x80000000	/* Options Template */
 #define BTPL_MAX	32
 /* Options Templates */
@@ -2937,6 +2938,21 @@ static struct base_template template_mpls = {
 	}
 };
 #endif
+
+#ifdef ENABLE_SRv6
+static struct base_template template_srv6 = {
+	.types = {
+		srv6SegmentLeft,
+		srv6LastEntry,
+		srv6Flag,
+		srv6Tag,
+		srv6InnerSourceIPv6Address,
+		srv6InnerDestinationIPv6Address,
+		0
+	}
+};
+#endif
+
 #ifdef ENABLE_DIRECTION
 static struct base_template template_direction = {
 	.types = { DIRECTION, 0 }
@@ -3269,6 +3285,8 @@ static struct data_template *get_template(const unsigned int tmask)
 				tlist[tnum++] = &template_options6;
 			if (tmask & BTPL_ICMPX6)
 				tlist[tnum++] = &template_icmp_ipv6;
+			if (tmask & BTPL_SRV6)
+			    tlist[tnum++] = &template_srv6;
 		} else if (tmask & BTPL_NAT4)
 			tlist[tnum++] = &template_nat4;
 		if (tmask & BTPL_PORTS)
@@ -3615,6 +3633,14 @@ static inline void add_tpl_field(__u8 *ptr, const int type, const struct ipt_net
 	case selectorId:
 			     *ptr = get_sampler_mode(); break;
 #endif
+#ifdef ENABLE_SRv6
+    case srv6SegmentLeft: *ptr = nf->tuple.seg_left; break;
+    case srv6LastEntry: *ptr = nf->tuple.last_entry; break;
+    case srv6Flag: *ptr = nf->tuple.seg6_flag; break;
+    case srv6Tag: put_unaligned_be16(nf->tuple.seg6_tag, ptr); break;
+    case srv6InnerSourceIPv6Address: *(in6_t *)ptr = nf->tuple.inner_src.in6; break;
+    case srv6InnerDestinationIPv6Address: *(in6_t *)ptr = nf->tuple.inner_dst.in6; break;
+##endif
 	default:
 			     WARN_ONCE(1, "NETFLOW: Unknown Element id %d\n", type);
 			     memset(ptr, 0, tpl_element_sizes[type]);
@@ -3765,6 +3791,10 @@ static void netflow_export_flow_tpl(struct ipt_netflow *nf)
 #ifdef MPLS_DEPTH
 	if (nf->tuple.mpls[0])
 		tpl_mask |= BTPL_MPLS;
+#endif
+#ifdef ENABLE_SRv6
+    if (nf->tuple.seg6_sid[0])
+        tpl_mask |= BTPL_SRV6;
 #endif
 #ifdef ENABLE_DIRECTION
 	if (nf->hooknumx)
@@ -5058,6 +5088,7 @@ static unsigned int netflow_target(
 			        tuple.last_entry = srhp->first_segment;
 			        tuple.seg6_flag = srhp->flags;
 			        tuple.seg6_tag = srhp->tag;
+			        tuple.seg6_sid[0] = srhp->segments[0];
 			        hdrlen = (srhp->hdrlen + 1) << 3;
 			        ptr += hdrlen;
 			        printk(KERN_INFO "ipt_NETFLOW : [debug-ptr] Current Pointer(after srh loading): %d \n",ptr);
