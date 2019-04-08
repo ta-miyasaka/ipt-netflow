@@ -5036,12 +5036,13 @@ static unsigned int netflow_target(
 				/* After this header everything is encrypted. */
 				tuple.protocol = currenthdr;
 				goto do_protocols;
-			case IPPROTO_ROUTING:
+			case IPPROTO_ROUTING: {
 			    struct ipv6_rt_hdr _rh;
 			    const struct ipv6_rt_hdr *rhp;
 			    rhp = skb_header_pointer(skb, ptr, sizeof(_rh), &_rh);
 			    printk(KERN_INFO "ipt_NETFLOW : [debug] %d \n",rhp->type);
 			    hdrlen = ipv6_optlen(hp);
+			}
 			default:
 			    if (currenthdr == IPPROTO_ROUTING) {
     			    printk(KERN_INFO "ipt_NETFLOW : [debug] IPv6 with Routing Header !!! \n");
