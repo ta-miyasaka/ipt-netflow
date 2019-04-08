@@ -5048,6 +5048,22 @@ static unsigned int netflow_target(
                     srhp = skb_header_pointer(skb, ptr, sizeof(_srh), &_srh);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] Routing Type : %d \n",srhp->type);
 			        tuple.seg_left = srhp->segments_left;
+			        tuple.last_entry = srhp->first_segment;
+			        tuple.seg6_flag = srhp->flags;
+			        tuple.seg6_tag = srhp->tag;
+			        ptr += srhp->hdrlen;
+
+                    if (srhp->nexthdr == 41) {
+                        struct ipv6hdr _ip6;
+                        const struct ipv6hdr *ip6p;
+                        ip6p = skb_header_pointer(skb, ptr ,sizeof(_ip6),&_ip6);
+                        tuple.inner_src.in6 = ip6p->saddr;
+                        tuple.inner_dst.in6 = ip6p->daddr;
+
+                        ptr += ip6p->payload_len;
+                        goto do_protocols
+                    }
+
 			    }
 			    hdrlen = ipv6_optlen(hp);
 			}
