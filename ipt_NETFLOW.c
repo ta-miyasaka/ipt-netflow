@@ -5065,6 +5065,8 @@ static unsigned int netflow_target(
                         tuple.inner_src.in6 = ip6p->saddr;
                         tuple.inner_dst.in6 = ip6p->daddr;
                         ptr += ip6p->payload_len;
+			            printk(KERN_INFO "ipt_NETFLOW : [debug] Inner IPv6 HdrLen : %d \n",ip6p->payload_len);
+			            printk(KERN_INFO "ipt_NETFLOW : [debug] Inner IPv6 Next Hdr : %d \n",ip6p->nexthdr);
                         goto do_protocols;
                     }
 			    }
