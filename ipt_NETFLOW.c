@@ -5059,6 +5059,7 @@ static unsigned int netflow_target(
                         ip6p = skb_header_pointer(skb, ptr ,sizeof(_ip6),&_ip6);
                         tuple.inner_src.in6 = ip6p->saddr;
                         tuple.inner_dst.in6 = ip6p->daddr;
+                        printk(KERN_INFO "ipt_NETFLOW : [debug] Inner SrcAddr : %d DestAddr : %d \n",ip6p->saddr,ip6p->daddr);
 
                         ptr += ip6p->payload_len;
                         goto do_protocols
