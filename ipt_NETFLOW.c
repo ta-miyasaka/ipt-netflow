@@ -5058,7 +5058,8 @@ static unsigned int netflow_target(
 			        tuple.last_entry = srhp->first_segment;
 			        tuple.seg6_flag = srhp->flags;
 			        tuple.seg6_tag = srhp->tag;
-			        ptr += srhp->hdrlen;
+			        hdrlen = (srhp->hdrlen + 1) << 3;
+			        ptr += hdrlen;
 			        printk(KERN_INFO "ipt_NETFLOW : [debug-ptr] Current Pointer(after srh loading): %d \n",ptr);
 
                     if (srhp->nexthdr == 41) {
