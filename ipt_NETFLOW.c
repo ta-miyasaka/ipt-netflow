@@ -5096,6 +5096,7 @@ do_protocols:
 		/* if conntrack is enabled it should defrag on pre-routing and local-out */
 		NETFLOW_STAT_INC(frags);
 	} else {
+		printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Protocol : %d\n",tuple.protocol);
 		switch (tuple.protocol) {
 		    case IPPROTO_TCP: {
 			struct tcphdr _hdr, *hp;
