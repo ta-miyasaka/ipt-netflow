@@ -5048,6 +5048,7 @@ static unsigned int netflow_target(
                     srhp = skb_header_pointer(skb, ptr, sizeof(_srh), &_srh);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] Routing Type : %d \n",srhp->type);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] Next Hdr : %d \n",srhp->nexthdr);
+			        printk(KERN_INFO "ipt_NETFLOW : [debug] Hdr Length : %d \n",srhp->hdrlen);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] Segment Left : %d \n",srhp->segments_left);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] First Segment : %d \n",srhp->first_segment);
 			        printk(KERN_INFO "ipt_NETFLOW : [debug] Flags : %d \n",srhp->flags);
