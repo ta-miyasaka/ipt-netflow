@@ -5134,8 +5134,7 @@ do_protocols:
 			if (likely(family == AF_INET6) &&
 				    likely(ic = skb_header_pointer(skb, ptr, 2, &_icmp6h)))
 				tuple.d_port = htons((ic->icmp6_type << 8) | ic->icmp6_code);
-				printk(KERN_INFO "ipt_NETFLOW : [debug] ICMPv6 type : %d \n",ic->icmp6_type);
-				printk(KERN_INFO "ipt_NETFLOW : [debug] ICMPv6 code : %d \n",ic->icmp6_code);
+				printk(KERN_INFO "ipt_NETFLOW : [debug] ICMPv6 type : %d\n",ic->icmp6_type);
 			break;
 		    }
 		    case IPPROTO_IGMP: {
