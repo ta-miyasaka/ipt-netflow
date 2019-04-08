@@ -3640,7 +3640,7 @@ static inline void add_tpl_field(__u8 *ptr, const int type, const struct ipt_net
     case srv6Tag: put_unaligned_be16(nf->tuple.seg6_tag, ptr); break;
     case srv6InnerSourceIPv6Address: *(in6_t *)ptr = nf->tuple.inner_src.in6; break;
     case srv6InnerDestinationIPv6Address: *(in6_t *)ptr = nf->tuple.inner_dst.in6; break;
-##endif
+#endif
 	default:
 			     WARN_ONCE(1, "NETFLOW: Unknown Element id %d\n", type);
 			     memset(ptr, 0, tpl_element_sizes[type]);
