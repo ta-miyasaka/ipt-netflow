@@ -178,7 +178,6 @@ struct netflow5_pdu {
 	one(395, selectorIDTotalFlowsSelected, 8) \
 	one(396, samplingFlowInterval, 1) \
 	one(397, samplingFlowSpacing, 2) \
-	// SRv6 related IE (tentative number)
 	one(492, srv6SegmentLeft, 1) \
 	one(493, srv6LastEntry, 1) \
 	one(494, srv6Flag, 1) \
@@ -195,22 +194,6 @@ struct netflow5_pdu {
 	one(505, srv6SidStackSection10,  16) \
 	one(506, srv6InnerSourceIPv6Address, 16) \
 	one(507, srv6InnerDestinationIPv6Address, 16) \
-
-
-/*
-
-#ifdef ENABLE_SRv6
-    __u8        seg_left;
-    __u8        last_entry;
-    __u8        seg6_flag;
-    __u16       seg6_tag;
-    struct in6_addr seg6_sid[3];
-    union nf_inet_addr inner_src;
-    union nf_inet_addr inner_dst;
-#endif
-
-
-*/
 
 enum {
 	Elements
