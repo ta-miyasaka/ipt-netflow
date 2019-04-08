@@ -5134,6 +5134,7 @@ do_protocols:
 			struct icmp6hdr _icmp6h, *ic;
 			printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Protocol : %d\n",tuple.protocol);
 			printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Family : %d\n",family);
+			printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Pointer : %d\n",ptr);
 			if (likely(family == AF_INET6) &&
 				    likely(ic = skb_header_pointer(skb, ptr, 2, &_icmp6h))) {
 				tuple.d_port = htons((ic->icmp6_type << 8) | ic->icmp6_code);
