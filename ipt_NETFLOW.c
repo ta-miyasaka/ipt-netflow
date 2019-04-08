@@ -5039,6 +5039,9 @@ static unsigned int netflow_target(
 			// case IPPROTO_ROUTING:
 			   // struct frag_hdr
 			default:
+			    if (currenthdr == IPPROTO_ROUTING) {
+    			    printk(KERN_INFO "ipt_NETFLOW : [debug] IPv6 with Routing Header !!! \n");
+			    }
 				hdrlen = ipv6_optlen(hp);
 			}
 			currenthdr = hp->nexthdr;
