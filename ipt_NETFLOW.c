@@ -5068,7 +5068,7 @@ static unsigned int netflow_target(
                         ip6p = skb_header_pointer(skb, ptr ,sizeof(_ip6),&_ip6);
                         tuple.inner_src.in6 = ip6p->saddr;
                         tuple.inner_dst.in6 = ip6p->daddr;
-                        ptr += ip6p->payload_len;
+                        ptr += sizeof(struct ipv6hdr);
 			            printk(KERN_INFO "ipt_NETFLOW : [debug] Inner IPv6 HdrLen : %d \n",ip6p->payload_len);
 			            printk(KERN_INFO "ipt_NETFLOW : [debug] Inner IPv6 Next Hdr : %d \n",ip6p->nexthdr);
 			            tuple.protocol = ip6p->nexthdr;
