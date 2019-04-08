@@ -3793,8 +3793,8 @@ static void netflow_export_flow_tpl(struct ipt_netflow *nf)
 		tpl_mask |= BTPL_MPLS;
 #endif
 #ifdef ENABLE_SRv6
-    if (nf->tuple.seg6_sid[0])
-        tpl_mask |= BTPL_SRV6;
+    // if (nf->tuple.seg6_sid[0])
+    tpl_mask |= BTPL_SRV6;
 #endif
 #ifdef ENABLE_DIRECTION
 	if (nf->hooknumx)
