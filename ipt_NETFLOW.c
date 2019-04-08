@@ -41,6 +41,7 @@
 #include <linux/spinlock_types.h>
 #include <linux/ktime.h>
 #include <linux/if_arp.h>
+#include <linux/seg6.h>
 #include <net/icmp.h>
 #include <net/ip.h>
 #include <net/ipv6.h>
