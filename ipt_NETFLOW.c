@@ -5041,6 +5041,7 @@ static unsigned int netflow_target(
 			case IPPROTO_ROUTING: {
 			    struct ipv6_rt_hdr _rh;
 			    const struct ipv6_rt_hdr *rhp;
+			    printk(KERN_INFO "ipt_NETFLOW : [debug-ptr] Current Pointer(before srh loading): %d \n",ptr);
 			    rhp = skb_header_pointer(skb, ptr, sizeof(_rh), &_rh);
 			    if (rhp->type == IPV6_SRCRT_TYPE_4) {
                     struct ipv6_sr_hdr _srh;
@@ -5058,6 +5059,7 @@ static unsigned int netflow_target(
 			        tuple.seg6_flag = srhp->flags;
 			        tuple.seg6_tag = srhp->tag;
 			        ptr += srhp->hdrlen;
+			        printk(KERN_INFO "ipt_NETFLOW : [debug-ptr] Current Pointer(after srh loading): %d \n",ptr);
 
                     if (srhp->nexthdr == 41) {
                         struct ipv6hdr _ip6;
