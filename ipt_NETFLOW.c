@@ -157,7 +157,7 @@ MODULE_PARM_DESC(promisc, "enable promisc hack (0=default, 1)");
 static DEFINE_MUTEX(promisc_lock);
 #endif
 
-static int debug = 3;
+static int debug = 0;
 module_param(debug, int, 0644);
 MODULE_PARM_DESC(debug, "debug verbosity level");
 
@@ -2832,7 +2832,7 @@ struct base_template {
 #define BTPL_SAMPLERID	0x00400000	/* samplerId (v9) */
 #define BTPL_SELECTORID	0x00800000	/* selectorId (IPFIX) */
 #define BTPL_MPLS	0x01000000	/* MPLS stack */
-#define BTPL_SRV6   0x02000000  /* SRv6 */
+#define BTPL_SRV6	0x02000000	/* SRv6 */
 #define BTPL_OPTION	0x80000000	/* Options Template */
 #define BTPL_MAX	32
 /* Options Templates */
@@ -3286,7 +3286,7 @@ static struct data_template *get_template(const unsigned int tmask)
 			if (tmask & BTPL_ICMPX6)
 				tlist[tnum++] = &template_icmp_ipv6;
 			if (tmask & BTPL_SRV6)
-			    tlist[tnum++] = &template_srv6;
+				tlist[tnum++] = &template_srv6;
 		} else if (tmask & BTPL_NAT4)
 			tlist[tnum++] = &template_nat4;
 		if (tmask & BTPL_PORTS)
@@ -3634,12 +3634,12 @@ static inline void add_tpl_field(__u8 *ptr, const int type, const struct ipt_net
 			     *ptr = get_sampler_mode(); break;
 #endif
 #ifdef ENABLE_SRv6
-    case srv6SegmentLeft: *ptr = nf->tuple.seg_left; break;
-    case srv6LastEntry: *ptr = nf->tuple.last_entry; break;
-    case srv6Flag: *ptr = nf->tuple.seg6_flag; break;
-    case srv6Tag: put_unaligned_be16(nf->tuple.seg6_tag, ptr); break;
-    case srv6InnerSourceIPv6Address: *(in6_t *)ptr = nf->tuple.inner_src.in6; break;
-    case srv6InnerDestinationIPv6Address: *(in6_t *)ptr = nf->tuple.inner_dst.in6; break;
+	case srv6SegmentLeft: *ptr = nf->tuple.seg_left; break;
+	case srv6LastEntry: *ptr = nf->tuple.last_entry; break;
+	case srv6Flag: *ptr = nf->tuple.seg6_flag; break;
+	case srv6Tag: put_unaligned_be16(nf->tuple.seg6_tag, ptr); break;
+	case srv6InnerSourceIPv6Address: *(in6_t *)ptr = nf->tuple.inner_src.in6; break;
+	case srv6InnerDestinationIPv6Address: *(in6_t *)ptr = nf->tuple.inner_dst.in6; break;
 #endif
 	default:
 			     WARN_ONCE(1, "NETFLOW: Unknown Element id %d\n", type);
@@ -3793,8 +3793,8 @@ static void netflow_export_flow_tpl(struct ipt_netflow *nf)
 		tpl_mask |= BTPL_MPLS;
 #endif
 #ifdef ENABLE_SRv6
-    // if (nf->tuple.seg6_sid[0])
-    tpl_mask |= BTPL_SRV6;
+	// if (nf->tuple.seg6_sid[0])
+	tpl_mask |= BTPL_SRV6;
 #endif
 #ifdef ENABLE_DIRECTION
 	if (nf->hooknumx)
@@ -5069,50 +5069,35 @@ static unsigned int netflow_target(
 				goto do_protocols;
 #ifdef ENABLE_SRv6
 			case IPPROTO_ROUTING: {
-			    struct ipv6_rt_hdr _rh;
-			    const struct ipv6_rt_hdr *rhp;
-			    printk(KERN_INFO "ipt_NETFLOW : [debug-ptr] Current Pointer(before srh loading): %d \n",ptr);
-			    rhp = skb_header_pointer(skb, ptr, sizeof(_rh), &_rh);
-			    if (rhp->type == IPV6_SRCRT_TYPE_4) {
-                    struct ipv6_sr_hdr _srh;
-                    const struct ipv6_sr_hdr *srhp;
-                    srhp = skb_header_pointer(skb, ptr, sizeof(_srh), &_srh);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] Routing Type : %d \n",srhp->type);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] Next Hdr : %d \n",srhp->nexthdr);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] Hdr Length : %d \n",srhp->hdrlen);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] Segment Left : %d \n",srhp->segments_left);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] First Segment : %d \n",srhp->first_segment);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] Flags : %d \n",srhp->flags);
-			        printk(KERN_INFO "ipt_NETFLOW : [debug] Tag : %d \n",srhp->tag);
-			        tuple.seg_left = srhp->segments_left;
-			        tuple.last_entry = srhp->first_segment;
-			        tuple.seg6_flag = srhp->flags;
-			        tuple.seg6_tag = srhp->tag;
-			        tuple.seg6_sid[0] = srhp->segments[0];
-			        hdrlen = (srhp->hdrlen + 1) << 3;
-			        ptr += hdrlen;
-			        printk(KERN_INFO "ipt_NETFLOW : [debug-ptr] Current Pointer(after srh loading): %d \n",ptr);
-
-                    if (srhp->nexthdr == 41) {
-                        struct ipv6hdr _ip6;
-                        const struct ipv6hdr *ip6p;
-                        ip6p = skb_header_pointer(skb, ptr ,sizeof(_ip6),&_ip6);
-                        tuple.inner_src.in6 = ip6p->saddr;
-                        tuple.inner_dst.in6 = ip6p->daddr;
-                        ptr += sizeof(struct ipv6hdr);
-			            printk(KERN_INFO "ipt_NETFLOW : [debug] Inner IPv6 HdrLen : %d \n",ip6p->payload_len);
-			            printk(KERN_INFO "ipt_NETFLOW : [debug] Inner IPv6 Next Hdr : %d \n",ip6p->nexthdr);
-			            tuple.protocol = ip6p->nexthdr;
-                        goto do_protocols;
-                    }
-			    }
-			    hdrlen = ipv6_optlen(hp);
+				struct ipv6_rt_hdr _rh;
+				const struct ipv6_rt_hdr *rhp;
+				rhp = skb_header_pointer(skb, ptr, sizeof(_rh), &_rh);
+				if (rhp->type == IPV6_SRCRT_TYPE_4) {
+					struct ipv6_sr_hdr _srh;
+					const struct ipv6_sr_hdr *srhp;
+					srhp = skb_header_pointer(skb, ptr, sizeof(_srh), &_srh);
+					tuple.seg_left = srhp->segments_left;
+					tuple.last_entry = srhp->first_segment;
+					tuple.seg6_flag = srhp->flags;
+					tuple.seg6_tag = srhp->tag;
+					tuple.seg6_sid[0] = srhp->segments[0];
+					hdrlen = (srhp->hdrlen + 1) << 3;
+					ptr += hdrlen;
+					if (srhp->nexthdr == 41) {
+						struct ipv6hdr _ip6;
+						const struct ipv6hdr *ip6p;
+						ip6p = skb_header_pointer(skb, ptr ,sizeof(_ip6),&_ip6);
+						tuple.inner_src.in6 = ip6p->saddr;
+						tuple.inner_dst.in6 = ip6p->daddr;
+						ptr += sizeof(struct ipv6hdr);
+						tuple.protocol = ip6p->nexthdr;
+						goto do_protocols;
+					}
+				}
+				hdrlen = ipv6_optlen(hp);
 			}
 #endif
 			default:
-			    if (currenthdr == IPPROTO_ROUTING) {
-    			    printk(KERN_INFO "ipt_NETFLOW : [debug] IPv6 with Routing Header !!! \n");
-			    }
 				hdrlen = ipv6_optlen(hp);
 			}
 			currenthdr = hp->nexthdr;
@@ -5127,7 +5112,6 @@ do_protocols:
 		/* if conntrack is enabled it should defrag on pre-routing and local-out */
 		NETFLOW_STAT_INC(frags);
 	} else {
-		printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Protocol : %d\n",tuple.protocol);
 		switch (tuple.protocol) {
 		    case IPPROTO_TCP: {
 			struct tcphdr _hdr, *hp;
@@ -5163,15 +5147,9 @@ do_protocols:
 		    }
 		    case IPPROTO_ICMPV6: {
 			struct icmp6hdr _icmp6h, *ic;
-			printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Protocol : %d\n",tuple.protocol);
-			printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Family : %d\n",family);
-			printk(KERN_INFO "ipt_NETFLOW : [debug-general] Current Pointer : %d\n",ptr);
 			if (likely(family == AF_INET6) &&
-				    likely(ic = skb_header_pointer(skb, ptr, 2, &_icmp6h))) {
+				    likely(ic = skb_header_pointer(skb, ptr, 2, &_icmp6h)))
 				tuple.d_port = htons((ic->icmp6_type << 8) | ic->icmp6_code);
-				printk(KERN_INFO "ipt_NETFLOW : [debug] ICMPv6 type : %d\n",ic->icmp6_type);
-				printk(KERN_INFO "ipt_NETFLOW : [debug] ICMPv6 type : %d\n",ic->icmp6_code);
-                }
 			break;
 		    }
 		    case IPPROTO_IGMP: {
