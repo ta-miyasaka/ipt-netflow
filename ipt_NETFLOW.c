@@ -3285,8 +3285,10 @@ static struct data_template *get_template(const unsigned int tmask)
 				tlist[tnum++] = &template_options6;
 			if (tmask & BTPL_ICMPX6)
 				tlist[tnum++] = &template_icmp_ipv6;
+#ifdef ENABLE_SRv6
 			if (tmask & BTPL_SRV6)
 				tlist[tnum++] = &template_srv6;
+#endif
 		} else if (tmask & BTPL_NAT4)
 			tlist[tnum++] = &template_nat4;
 		if (tmask & BTPL_PORTS)
